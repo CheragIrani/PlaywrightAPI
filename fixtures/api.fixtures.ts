@@ -7,7 +7,6 @@ import { ContactsApi } from '../api/contacts.api'
 type APIFixtures = {
     contactPayload: ContactPayload,
     userPayload: UserPayload
-    token: string
     usersApi: UsersApi
     contactApi: ContactsApi
 }
@@ -42,16 +41,12 @@ export const apiTest = base.extend<APIFixtures>({
         await use(userPayload)
         
     },
-    token: async ({request, userPayload}, use) => {
-        const userApi = new UsersApi(request, '');
-        await use(await userApi.createUser(userPayload)) 
-    },
-    usersApi: async ({request, token}, use) => {
-        const usersApi = new  UsersApi(request, token)
+    usersApi: async ({request}, use) => {
+        const usersApi = new  UsersApi(request)
         await use(usersApi)
     },
-    contactApi: async ({request, token}, use) => {
-        const contactApi = new  ContactsApi(request, token)
+    contactApi: async ({request}, use) => {
+        const contactApi = new  ContactsApi(request)
         await use(contactApi)
     }
 })
