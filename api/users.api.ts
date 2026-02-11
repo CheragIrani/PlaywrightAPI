@@ -13,7 +13,7 @@ export class UsersApi extends ApiClient{
         if(status >= 400){ throw new Error(`POST /users failed with status ${status}`)}
 
         const body = await resp.json();
-        return body.token
+        return body
 
     }
 
