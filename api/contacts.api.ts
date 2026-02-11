@@ -1,22 +1,13 @@
 import { APIRequestContext } from "@playwright/test";
 import { ContactPayload } from "../data/contact.payload";
 import { GetContactResponse } from "../data/contact.response";
+import { ApiClient } from "./apiClient";
 
-export class ContactsApi{
-
-    readonly request: APIRequestContext
-    readonly token?: string
-
-    constructor(request: APIRequestContext, token: string){
-        this.request = request
-        this.token = token
-    }
+export class ContactsApi extends ApiClient{
 
     async createContact(contactPayload: ContactPayload) {
         const resp = await this.request.post('/contacts', {
-            headers: {
-                'Authorization' : `Bearer ${this.token}`
-            },
+            headers: await this.authHeader(),
             data: contactPayload
 
         })
@@ -29,9 +20,7 @@ export class ContactsApi{
 
     async getContact(): Promise<GetContactResponse[]> {
         const resp = await this.request.get('/contacts', {
-            headers: {
-                'Authorization' : `Bearer ${this.token}`
-            }
+            headers: await this.authHeader()
         })
         const status = resp.status()
         if(status >= 400){ throw new Error(`GET /contacts failed with status ${status}`)}
@@ -42,9 +31,7 @@ export class ContactsApi{
 
     async deleteContact(id: string){
         const resp = await this.request.delete(`/contacts/${id}`, {
-            headers: {
-                'Authorization' : `Bearer ${this.token}`
-            }
+            headers: await this.authHeader()
         })
         const status = resp.status()
         if(status >= 400){ throw new Error(`DELETE /contacts/${id} failed with status ${status}`)}

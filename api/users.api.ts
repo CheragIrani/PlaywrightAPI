@@ -1,16 +1,9 @@
 import { APIRequestContext } from "@playwright/test"
 import { UserPayload } from "../data/user.payload"
 import { LoginResponse } from "../data/user.response"
+import { ApiClient } from "./apiClient"
 
-export class UsersApi{
-
-    readonly request: APIRequestContext
-    readonly token?: string
-    
-    constructor(request: APIRequestContext, token: string){
-        this.request = request
-        this.token = token
-    }
+export class UsersApi extends ApiClient{
 
     async createUser(userPayload: UserPayload){
         const resp = await this.request.post('/users', {
@@ -38,16 +31,13 @@ export class UsersApi{
 
     async deleteUser(){
         const resp = await this.request.delete('/users/me', {
-            headers: {
-                'Authorization' : `Bearer ${this.token}`
-            }   
+            headers: await this.authHeader()
         })
         const status = resp.status()
         const body = await resp.text()
         if(status >= 400){ throw new Error(`DELETE /users/me failed with status ${status}`)}
         console.log('DELETE /users/me text is ', body)
-        //return await resp.json()
-
+        
     }
 
 }
